@@ -1,1 +1,33 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
+
+{% block title %}メンバーログイン | LAB0 PRINT{% endblock %}
+
+{% block header_action %}
+<a class="header-link" href="{{ url_for('progress') }}">進捗一覧へ</a>
+{% endblock %}
+
+{% block content %}
+<main class="login-shell">
+    <section class="login-card">
+        <div class="login-icon" aria-hidden="true">L0</div>
+        <p class="eyebrow">STAFF ACCESS</p>
+        <h1>メンバーログイン</h1>
+        <p class="login-intro">申込情報の管理画面にアクセスします。</p>
+
+        {% if error %}
+        <div class="alert-error" role="alert">{{ error }}</div>
+        {% endif %}
+
+        <form class="stack-form" action="{{ url_for('member_login') }}" method="post">
+            <label for="username">ユーザー名</label>
+            <input id="username" name="username" type="text" autocomplete="username" required>
+
+            <label for="password">パスワード</label>
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+            <button class="button button-primary button-full" type="submit">ログイン</button>
+        </form>
+        <a class="back-link" href="{{ url_for('progress') }}">← 進捗一覧に戻る</a>
+    </section>
+</main>
+{% endblock %}

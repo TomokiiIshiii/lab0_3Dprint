@@ -14,6 +14,7 @@ load_dotenv()
 # Flaskアプリケーションの作成
 app = Flask(__name__)
 
+app.secret_key = os.getenv('SECRET_KEY')
 
 # ログイン関係
 login_manager = LoginManager()
@@ -53,7 +54,7 @@ def progress():
         with conn.cursor() as cur:
             try:
                 cur.execute("SELECT apply_id, progress_status, engraving_text, remark_text FROM requests;")
-                db_requests = cur.fethcall()
+                db_requests = cur.fetchall()
             except Exception as e:
                 print('データ取得に失敗', e)
                 return 'データ取得に失敗', 500
@@ -65,7 +66,7 @@ def member_login():
     if request.method == 'GET':
         return render_template('member-login.html')
     elif request.method == 'POST':
-        username = request.form.get('userame')
+        username = request.form.get('username')
         password = request.form.get('password')
         if username == os.getenv('LOGIN_USER') and check_password_hash(os.getenv('LOGIN_PASSWORD_HASH'), password):
             user = User(id=username)
@@ -75,6 +76,67 @@ def member_login():
             return render_template('member-login.html', error='ユーザー名またはパスワードが間違っています')
 
 # lab0メンバー画面
-@app.route('/member')
+@app.route('/member', methods=['GET'])
+@login_required
 def member():
-    pass
+    if request.method == 'GET':
+        with connect_db() as conn:
+                with conn.cursor() as cur:
+                    try:
+                        cur.execute("SELECT apply_id, progress_status, engraving_text, remark_text FROM requests;")
+                        db_requests = cur.fetchall()
+                    except Exception as e:
+                        print('データ取得に失敗', e)
+                        return 'データ取得に失敗', 400
+        return render_template('member.html', requests=db_requests, proglist=['作成中', '完成'])
+
+# 申し込みデータの追加
+@app.route('/add', methods=['POST'])
+@login_required
+def add():
+    with connect_db() as conn:
+            with conn.cursor() as cur:
+                try:
+                    apply_id = int(request.form.get('apply_id'))
+                    progress_status = '作成中'
+                    engraving_text = request.form.get('engraving_text')
+                    remark_text = request.form.get('remark_text')
+                    cur.execute("INSERT INTO requests (apply_id, progress_status, engraving_text, remark_text) VALUES (%s, %s, %s, %s);",
+                                (apply_id, progress_status, engraving_text, remark_text))
+                except Exception as e:
+                    print('データ保存に失敗', e)
+                    return 'データ保存に失敗', 400
+    return redirect(url_for('member'))
+
+# データの削除
+@app.route('/delete', methods=['POST'])
+@login_required
+def delete():
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            try:
+                apply_id = int(request.form.get('apply_id'))
+                cur.execute("DELETE FROM requests WHERE apply_id=%s;",
+                            (apply_id,))
+            except Exception as e:
+                print('データ削除に失敗', e)
+                return 'データ削除に失敗', 400
+    return redirect(url_for('member'))
+
+# 申し込みデータの更新
+@app.route('/update', methods=['POST'])
+@login_required
+def update():
+    with connect_db() as conn:
+        with conn.cursor() as cur:
+            try:
+                apply_id = int(request.form.get('apply_id'))
+                progress_status = request.form.get('progress_status')
+                engraving_text = request.form.get('engraving_text')
+                remark_text = request.form.get('remark_text')
+                cur.execute("UPDATE requests SET progress_status=%s, engraving_text=%s, remark_text=%s WHERE apply_id=%s;",
+                            (progress_status, engraving_text, remark_text, apply_id))
+            except Exception as e:
+                print('データ保存に失敗', e)
+                return 'データ保存に失敗', 400
+    return redirect(url_for('member'))

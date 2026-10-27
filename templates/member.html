@@ -1,1 +1,105 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
+
+{% block title %}申込管理 | LAB0 PRINT{% endblock %}
+
+{% block header_action %}
+<span class="staff-label">メンバー管理画面</span>
+{% endblock %}
+
+{% block content %}
+<main class="page-shell admin-shell">
+    <section class="admin-heading">
+        <div>
+            <p class="eyebrow">STAFF DASHBOARD</p>
+            <h1>申込情報の管理</h1>
+            <p>進捗状況や作品情報を確認・更新できます。</p>
+        </div>
+        <a class="button button-secondary" href="{{ url_for('progress') }}">公開ページを見る ↗</a>
+    </section>
+
+    <section class="admin-section" aria-labelledby="new-entry-heading">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">NEW APPLICATION</p>
+                <h2 id="new-entry-heading">申込情報を追加</h2>
+            </div>
+        </div>
+        <form class="form-panel add-form" action="{{ url_for('add') }}" method="post">
+            <div class="form-field">
+                <label for="new-apply-id">申込番号</label>
+                <input id="new-apply-id" name="apply_id" type="number" min="1" required>
+            </div>
+            <div class="form-field">
+                <label for="new-engraving-text">刻印する文字</label>
+                <input id="new-engraving-text" name="engraving_text" type="text" maxlength="32" required>
+            </div>
+            <div class="form-field form-field-wide">
+                <label for="new-remark-text">備考 <span class="optional-label">任意</span></label>
+                <textarea id="new-remark-text" name="remark_text" rows="2"></textarea>
+            </div>
+            <div class="form-submit">
+                <button class="button button-primary" type="submit">＋ 申込を追加</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="admin-section" aria-labelledby="applications-heading">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">APPLICATIONS</p>
+                <h2 id="applications-heading">登録済みの申込</h2>
+            </div>
+            <span class="count-pill">{{ requests|length }} 件</span>
+        </div>
+
+        {% if requests %}
+        <div class="admin-list">
+            {% for item in requests %}
+            <article class="admin-card">
+                <div class="admin-card-heading">
+                    <div class="application-number">
+                        <span class="field-label">申込番号</span>
+                        <strong>#{{ item.apply_id }}</strong>
+                    </div>
+                    <form action="{{ url_for('delete') }}" method="post"
+                          onsubmit="return confirm('申込番号 #{{ item.apply_id }} を削除しますか？');">
+                        <input type="hidden" name="apply_id" value="{{ item.apply_id }}">
+                        <button class="button button-danger button-small" type="submit">削除</button>
+                    </form>
+                </div>
+
+                <form class="edit-form" action="{{ url_for('update') }}" method="post">
+                    <input type="hidden" name="apply_id" value="{{ item.apply_id }}">
+                    <div class="form-field">
+                        <label for="status-{{ loop.index }}">進捗状況</label>
+                        <select id="status-{{ loop.index }}" name="progress_status" required>
+                            <option value="作成中" {% if item.progress_status not in ['完成', '完成しました。ブースまでお越しください。'] %}selected{% endif %}>作成中</option>
+                            <option value="完成" {% if item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}selected{% endif %}>完成</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="engraving-{{ loop.index }}">刻印する文字</label>
+                        <input id="engraving-{{ loop.index }}" name="engraving_text" type="text"
+                               maxlength="32" value="{{ item.engraving_text }}" required>
+                    </div>
+                    <div class="form-field form-field-wide">
+                        <label for="remark-{{ loop.index }}">備考 <span class="optional-label">任意</span></label>
+                        <textarea id="remark-{{ loop.index }}" name="remark_text" rows="2">{{ item.remark_text or '' }}</textarea>
+                    </div>
+                    <div class="form-submit">
+                        <button class="button button-primary" type="submit">変更を保存</button>
+                    </div>
+                </form>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">○</span>
+            <h3>申込情報はまだありません</h3>
+            <p>上のフォームから申込情報を追加してください。</p>
+        </div>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

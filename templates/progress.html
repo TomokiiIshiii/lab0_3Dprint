@@ -1,1 +1,75 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
+
+{% block title %}進捗状況 | LAB0 PRINT{% endblock %}
+
+{% block header_action %}{% endblock %}
+
+{% block content %}
+<main class="page-shell">
+    <section class="hero">
+        <p class="eyebrow">YOUR PRINT, IN PROGRESS</p>
+        <h1>プリントの進捗を<br class="mobile-break">確認できます</h1>
+        <p class="hero-copy">
+            3Dプリンタ体験でお申し込みいただいた作品の状況をご案内します。
+            申込番号をお手元にご用意ください。
+        </p>
+        <div class="hero-note">
+            <span class="status-dot" aria-hidden="true"></span>
+            状況はスタッフが随時更新しています
+        </div>
+    </section>
+
+    <section class="content-section" aria-labelledby="progress-heading">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">PRINT QUEUE</p>
+                <h2 id="progress-heading">現在の進捗状況</h2>
+            </div>
+            <span class="count-pill">{{ requests|length }} 件</span>
+        </div>
+
+        {% if requests %}
+        <div class="progress-list">
+            {% for item in requests %}
+            <article class="progress-card">
+                <div class="application-number">
+                    <span class="field-label">申込番号</span>
+                    <strong>#{{ item.apply_id }}</strong>
+                </div>
+                <div class="progress-detail">
+                    <span class="field-label">ステータス</span>
+                    {% if item.progress_status == '作成中' %}
+                    <span class="status-badge status-making">
+                        <span class="status-dot" aria-hidden="true"></span>{{ item.progress_status }}
+                    </span>
+                    {% elif item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}
+                    <span class="status-badge status-complete">
+                        <span class="status-dot" aria-hidden="true"></span>完成しました
+                    </span>
+                    {% else %}
+                    <span class="status-badge status-other">
+                        <span class="status-dot" aria-hidden="true"></span>{{ item.progress_status }}
+                    </span>
+                    {% endif %}
+                </div>
+                {% if item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}
+                <p class="pickup-note">作品をお受け取りいただけます。2号館1階のブースまでお越しください。</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">○</span>
+            <h3>現在、表示できる申込情報はありません</h3>
+            <p>お申し込み後、情報が登録されるとこちらに表示されます。</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <aside class="help-card">
+        <span class="help-icon" aria-hidden="true">i</span>
+        <p>申込番号が見つからない場合や、ご不明な点がある場合は、lab0メンバーまでお声がけください。</p>
+    </aside>
+</main>
+{% endblock %}

@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>3Dプリント進捗状況</title>
+    <meta name="theme-color" content="#f5f7f2">
+    <title>{% block title %}3Dプリント進捗状況{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <header class="site-header">
+        <a class="brand" href="{{ url_for('progress') }}">
+            <span class="brand-mark" aria-hidden="true">3D</span>
+            <span>
+                <strong>LAB0 PRINT</strong>
+                <small>3Dプリント体験 進捗案内</small>
+            </span>
+        </a>
+        {% block header_action %}
+        <a class="header-link" href="{{ url_for('member_login') }}">メンバー ログイン</a>
+        {% endblock %}
+    </header>
     {% block content %}
     {% endblock %}
+    <footer class="site-footer">
+        <span>LAB0 · 3D PRINT EXPERIENCE</span>
+        <span>ものづくりの進捗をお知らせします</span>
+    </footer>
 </body>
 </html>
