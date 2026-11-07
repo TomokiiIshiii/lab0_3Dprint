@@ -10,5 +10,5 @@ dependencies = [
     "flask-bootstrap>=3.3.7.1",
     "flask-login>=0.6.3",
     "gunicorn>=26.2.0",
-    "psycopg>=3.3.6",
+    "psycopg[binary]>=3.3.6",
 ]
