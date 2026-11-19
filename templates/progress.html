@@ -42,6 +42,10 @@
                     <span class="status-badge status-making">
                         <span class="status-dot" aria-hidden="true"></span>{{ item.progress_status }}
                     </span>
+                    {% elif item.progress_status == 'お呼び出し' %}
+                    <span class="status-badge status-call">
+                        <span class="status-dot" aria-hidden="true"></span>お呼び出し
+                    </span>
                     {% elif item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}
                     <span class="status-badge status-complete">
                         <span class="status-dot" aria-hidden="true"></span>完成しました
@@ -54,6 +58,8 @@
                 </div>
                 {% if item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}
                 <p class="pickup-note">作品をお受け取りいただけます。2号館1階のブースまでお越しください。</p>
+                {% elif item.progress_status == 'お呼び出し' %}
+                <p class="pickup-note">お伝えしたいことがございます。2号館1階へお越しください。</p>
                 {% endif %}
             </article>
             {% endfor %}

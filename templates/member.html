@@ -73,7 +73,8 @@
                     <div class="form-field">
                         <label for="status-{{ loop.index }}">進捗状況</label>
                         <select id="status-{{ loop.index }}" name="progress_status" required>
-                            <option value="作成中" {% if item.progress_status not in ['完成', '完成しました。ブースまでお越しください。'] %}selected{% endif %}>作成中</option>
+                            <option value="作成中" {% if item.progress_status not in ['お呼び出し', '完成', '完成しました。ブースまでお越しください。'] %}selected{% endif %}>作成中</option>
+                            <option value="お呼び出し" {% if item.progress_status == 'お呼び出し' %}selected{% endif %}>お呼び出し</option>
                             <option value="完成" {% if item.progress_status in ['完成', '完成しました。ブースまでお越しください。'] %}selected{% endif %}>完成</option>
                         </select>
                     </div>

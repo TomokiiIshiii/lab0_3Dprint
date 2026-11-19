@@ -88,7 +88,7 @@ def member():
                     except Exception as e:
                         print('データ取得に失敗', e)
                         return 'データ取得に失敗', 400
-        return render_template('member.html', requests=db_requests, proglist=['作成中', '完成'])
+        return render_template('member.html', requests=db_requests, proglist=['作成中', 'お呼び出し', '完成'])
 
 # 申し込みデータの追加
 @app.route('/add', methods=['POST'])
@@ -134,6 +134,8 @@ def update():
                 progress_status = request.form.get('progress_status')
                 engraving_text = request.form.get('engraving_text')
                 remark_text = request.form.get('remark_text')
+                if progress_status not in ['作成中', 'お呼び出し', '完成']:
+                    return '不正な進捗状況です', 400
                 cur.execute("UPDATE requests SET progress_status=%s, engraving_text=%s, remark_text=%s WHERE apply_id=%s;",
                             (progress_status, engraving_text, remark_text, apply_id))
             except Exception as e:

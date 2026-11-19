@@ -251,6 +251,11 @@ p {
     background: var(--green-soft);
 }
 
+.status-call {
+    color: #315b99;
+    background: #eaf2ff;
+}
+
 .status-other {
     color: #526275;
     background: #edf1f5;
